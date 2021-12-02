@@ -14,6 +14,7 @@ impl Thermometer {
     fn new(name: String, temperature: u16) -> Self {
         Thermometer { name, temperature }
     }
+
     fn current_temperature(&self) -> u16 {
         self.temperature
     }
@@ -43,9 +44,11 @@ impl SmartPlug {
             capacity,
         }
     }
+
     fn turn_on(&mut self) {
         self.status = true;
     }
+
     fn turn_off(&mut self) {
         self.status = false;
     }
@@ -72,6 +75,7 @@ impl Device {
             Device::Thermometer(t) => t.report(),
         }
     }
+
     fn get_name(&self) -> &String {
         match self {
             Device::SmartPlug(plug) => &plug.name,
@@ -88,19 +92,19 @@ pub struct Room {
 
 impl Room {
     fn report(&self) -> Vec<String> {
-        let mut report = Vec::new();
+        let mut report = Vec::with_capacity(self.devices.len());
         for device in &self.devices {
             report.push(device.report());
         }
         report
     }
 
-    fn _find(&self, name: &String) -> Result<&Device, String> {
+    fn find(&self, name: &str) -> Result<&Device, String> {
         let search = self.devices.iter().find(|device| {
             let device_name = match device {
-                    Device::Thermometer(t) => &t.name,
-                    Device::SmartPlug(p) => &p.name,
-                };
+                Device::Thermometer(t) => &t.name,
+                Device::SmartPlug(p) => &p.name,
+            };
             *name == *device_name
         });
         match search {
@@ -113,7 +117,7 @@ impl Room {
         Self {
             name,
             area,
-            devices: vec![],
+            devices: Vec::new(),
         }
     }
 
@@ -131,7 +135,7 @@ impl Home {
     fn new(name: String) -> Self {
         Home {
             _name: name,
-            rooms: vec![],
+            rooms: Vec::new(),
         }
     }
 
@@ -149,18 +153,18 @@ impl Home {
         reports
     }
 
-    fn find(&self, name: &String) -> Result<&Room, String> {
+    fn find(&self, name: &str) -> Result<&Room, String> {
         match self.rooms.iter().find(|room| room.name == *name) {
             Some(room) => Ok(room),
             None => Err(String::from("Room not found")),
         }
     }
 
-    fn contains(&self, name: String) -> bool {
+    fn contains(&self, name: &str) -> bool {
         matches!(self.rooms.iter().find(|room| room.name == name), Some(_))
     }
 
-    fn remove(&mut self, name: String) -> bool {
+    fn remove(&mut self, name: &str) -> bool {
         if let Some(index) = self.rooms.iter().position(|room| room.name == name) {
             self.rooms.swap_remove(index);
             true
@@ -188,12 +192,12 @@ mod tests {
 
         home.rooms.push(bedroom);
 
-        assert!(home.contains(String::from("Bed room")));
-        assert!(!home.contains(String::from("Hall")));
+        assert!(home.contains("Bed room"));
+        assert!(!home.contains("Hall"));
         assert_eq!(home.rooms.len(), 1);
 
         home.rooms.push(hall);
-        assert!(home.contains(String::from("Hall")));
+        assert!(home.contains("Hall"));
         assert_eq!(home.rooms.len(), 2);
     }
 
@@ -233,13 +237,13 @@ mod tests {
         let bedroom = Room::new(String::from("Bed room"), 12);
         home.rooms.push(bedroom);
 
-        let search = home.find(&String::from("Bed room"));
+        let search = home.find("Bed room");
 
         assert!(search.is_ok());
-        assert_eq!(search.unwrap().name, String::from("Bed room"));
+        assert_eq!(search.unwrap().name, "Bed room");
 
-        home.remove(String::from("Bed room"));
-        let search = home.find(&String::from("Bed room"));
+        home.remove("Bed room");
+        let search = home.find("Bed room");
         assert!(search.is_err());
     }
 
@@ -252,9 +256,9 @@ mod tests {
             String::from("t1"),
             30,
         )));
-        let device = bedroom._find(&String::from("t1"));
+        let device = bedroom.find("t1");
         assert_eq!(bedroom.devices.len(), 3);
         assert!(device.is_ok());
-        assert_eq!(*device.unwrap().get_name(), String::from("t1"));
+        assert_eq!(*device.unwrap().get_name(), "t1");
     }
 }
