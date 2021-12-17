@@ -8,11 +8,11 @@ pub enum Device {
 }
 
 impl Device {
-    pub fn new_plug(name: String, capacity: u16) -> Self {
+    pub fn create_plug(name: String, capacity: u16) -> Self {
         Device::SmartPlug(SmartPlug::new(name, capacity))
     }
 
-    pub fn new_thermometer(name: String, temperature: u16) -> Self {
+    pub fn create_thermometer(name: String, temperature: u16) -> Self {
         Device::Thermometer(Thermometer::new(name, temperature))
     }
 
@@ -37,7 +37,7 @@ mod test {
 
     #[test]
     fn create_plug_device() {
-        let d = Device::new_plug(String::from("name"), 120);
+        let d = Device::create_plug(String::from("name"), 120);
         match d {
             Device::SmartPlug(_) => assert!(true),
             _ => unreachable!(),
@@ -45,7 +45,7 @@ mod test {
     }
     #[test]
     fn create_plug_thermometer() {
-        let d = Device::new_thermometer(String::from("name"), 34);
+        let d = Device::create_thermometer(String::from("name"), 34);
         match d {
             Device::Thermometer(_) => assert!(true),
             _ => unreachable!(),
