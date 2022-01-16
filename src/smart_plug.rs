@@ -7,9 +7,9 @@ pub struct SmartPlug {
 }
 
 impl SmartPlug {
-    pub fn new(name: String, capacity: u16) -> SmartPlug {
+    pub fn new(name: &str, capacity: u16) -> SmartPlug {
         SmartPlug {
-            name,
+            name: name.to_string(),
             status: false,
             capacity,
         }

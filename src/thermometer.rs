@@ -6,8 +6,11 @@ pub struct Thermometer {
 }
 
 impl Thermometer {
-    pub fn new(name: String, temperature: u16) -> Self {
-        Thermometer { name, temperature }
+    pub fn new(name: &str, temperature: u16) -> Self {
+        Thermometer {
+            name: name.to_string(),
+            temperature,
+        }
     }
 
     fn current_temperature(&self) -> u16 {

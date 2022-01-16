@@ -1,3 +1,4 @@
+use crate::app_error::AppError;
 use crate::device::Device;
 
 pub struct Room {
@@ -15,29 +16,33 @@ impl Room {
         report
     }
 
-    pub fn find(&self, name: &str) -> Result<&Device, String> {
-        let search = self.devices.iter().find(|device| {
-            let device_name = match device {
-                Device::Thermometer(t) => &t.name,
-                Device::SmartPlug(p) => &p.name,
-            };
-            *name == *device_name
-        });
-        match search {
-            Some(device) => Ok(device),
-            None => Err(format!("Device {} not found", name)),
-        }
+    pub fn find(&self, name: &str) -> Option<&Device> {
+        self.devices
+            .iter()
+            .find(|device| name == *device.get_name())
     }
 
-    pub fn new(name: String, area: u8) -> Self {
+    pub fn new(name: &str, area: u8) -> Self {
         Self {
-            name,
+            name: name.to_string(),
             area,
             devices: Vec::new(),
         }
     }
 
-    pub fn install(&mut self, device: Device) {
-        self.devices.push(device);
+    pub fn install(&mut self, device: Device) -> Result<(), AppError> {
+        match self.find(device.get_name()) {
+            Some(_) => Err(AppError::new(
+                format!(
+                    "The device with name {} already installed",
+                    device.get_name()
+                )
+                .as_str(),
+            )),
+            None => {
+                self.devices.push(device);
+                Ok(())
+            }
+        }
     }
 }

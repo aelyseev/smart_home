@@ -1,3 +1,4 @@
+mod app_error;
 pub mod device;
 pub mod home;
 pub mod home_device;
