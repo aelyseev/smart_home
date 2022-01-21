@@ -45,4 +45,32 @@ impl Room {
             }
         }
     }
+
+    pub fn uninstall(&mut self, device_name: &str) -> Option<Device> {
+        if let Some(index) = self.devices.iter().position(|device| device.get_name() == device_name) {
+            Some(self.devices.swap_remove(index))
+        } else {
+            None
+        }
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn uninstall_device() {
+        let mut room = Room::new("home", 20);
+        let _ = room.install(Device::create_thermometer("t1", 100));
+
+        let res = room.uninstall("t");
+        assert!(res.is_none());
+        assert_eq!(room.devices.len(), 1);
+
+        let res = room.uninstall("t1");
+        assert!(res.is_some());
+        assert_eq!(room.devices.len(), 0);
+        assert_eq!(res.unwrap().get_name(), "t1");
+    }
 }

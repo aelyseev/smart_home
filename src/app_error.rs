@@ -16,7 +16,7 @@ impl AppError {
 
 impl fmt::Display for AppError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "AppError occurs")
+        write!(f, "[AppError occurs]: {}", self.reason)
     }
 }
 
@@ -41,8 +41,18 @@ impl AppErrorReason {
 
 impl fmt::Display for AppErrorReason {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "AppErrorReason message, {}", self.message)
+        write!(f, "{}", self.message)
     }
 }
 
 impl Error for AppErrorReason {}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn test_error() {
+       println!("{}", AppError::new("Bad message"));
+    }
+}

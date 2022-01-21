@@ -49,7 +49,7 @@ impl Home {
     }
 
     pub fn contains(&self, name: &str) -> bool {
-        matches!(self.rooms.iter().find(|room| room.name == name), Some(_))
+        self.rooms.iter().find(|room| room.name == name).is_some()
     }
 
     pub fn remove(&mut self, name: &str) -> Option<Room> {
